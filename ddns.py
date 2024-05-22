@@ -5,7 +5,7 @@ try:
     print(
 '''ddns-py-huawei 启动！
 一款用于华为云的 DDNS 工具。
-版本：1.0
+版本：1.0.1
 作者：bddjr
 仓库：https://github.com/bddjr/ddns-py-huawei
 =============================================='''
@@ -17,8 +17,6 @@ try:
     import json, time, sys, copy, os, re
     from typing import Any
     
-    # 文件夹里有的
-
     def logger(text):
         if isinstance(text, dict):
             try:
@@ -252,7 +250,7 @@ f'''选择操作模式
         except Exception as e:
             logger(e)
             return
-        if resp.status_code != 200:
+        if resp.status_code > 299:
             logger(f"获取IP失败！HTTP状态码 {resp.status_code}")
             return
         ipMatched = ipRegexp.search(resp.text)
@@ -266,15 +264,29 @@ f'''选择操作模式
         logger('获取 zone')
         try:
             req = ListPublicZonesRequest()
+            # 简单筛选根域名，例如 ddns.example.com => example.com
+            reqName = re.search(r'[^\.]+\.[^\.]+$', config['name'])
+            if reqName:
+                req.name = reqName.group()
             resp: ListPublicZonesResponse = client.list_public_zones(req) # type: ignore
-            if resp.status_code != 200:
+            if not resp.status_code or resp.status_code > 299:
                 logger(f'获取失败，状态码 {resp.status_code}')
                 return False
             zones: list[dict[str,Any]] = resp.to_dict()['zones']
-            name = config['name']+'.'
+            name: str = config['name']+'.'
+            j = None
             for i in zones:
-                if str.endswith(name, '.'+i['name']) or name == i['name']:
+                if name == i['name']:
+                    # 一模一样，直接返回
                     return i
+                if name.endswith('.'+i['name']):
+                    # 目标域名以 i的name 结尾
+                    if j == None or len(i['name']) > len(j['name']):
+                        # j是空，或 i的name 比 j的name 长
+                        j = i
+            if j:
+                # 返回长度最接近目标域名的zone
+                return j
             logger('找不到与name匹配的zone，请检查账号里有没有根域名的DNS。:(')
         except Exception as e:
             logger(e)
