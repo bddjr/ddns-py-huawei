@@ -5,7 +5,7 @@ try:
     print(
 '''ddns-py-huawei 启动！
 一款用于华为云的 DDNS 工具。
-版本：1.0.4
+版本：1.0.5
 作者：bddjr
 仓库：https://github.com/bddjr/ddns-py-huawei
 =============================================='''
@@ -80,7 +80,7 @@ try:
     except:
         pip_install('huaweicloudsdkdns')
         from huaweicloudsdkdns.v2.region.dns_region import DnsRegion
-    from huaweicloudsdkdns.v2 import *
+    from huaweicloudsdkdns.v2 import * # type: ignore
 
     del pip_install
 
@@ -383,7 +383,8 @@ f'''选择操作模式
 
     if mode == 1:
         get_ip()
-        set_record()
+        if not set_record():
+            exit(1)
     elif mode == 2:
         get_ip()
         update_dns_success = set_record()
@@ -434,3 +435,4 @@ f'''选择操作模式
 
 except KeyboardInterrupt:
     print('\nCtrl+C')
+    exit(1)
