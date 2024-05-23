@@ -11,7 +11,12 @@ try:
 =============================================='''
     )
 
-    # 参考 https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ListPublicZones
+    # 参考
+    # https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ListPublicZones
+    # https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=ListRecordSetsByZone
+    # https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=CreateRecordSet
+    # https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=UpdateRecordSet
+    # https://console.huaweicloud.com/apiexplorer/#/openapi/DNS/sdk?api=DeleteRecordSet
 
     #Py3自带模块
     import json, time, sys, copy, os, re
