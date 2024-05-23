@@ -5,7 +5,7 @@ try:
     print(
 '''ddns-py-huawei 启动！
 一款用于华为云的 DDNS 工具。
-版本：1.0.3
+版本：1.0.4
 作者：bddjr
 仓库：https://github.com/bddjr/ddns-py-huawei
 =============================================='''
