@@ -5,7 +5,7 @@ try:
     print(
 '''ddns-py-huawei 启动！
 一款用于华为云的 DDNS 工具。
-版本：1.0.1
+版本：1.0.2
 作者：bddjr
 仓库：https://github.com/bddjr/ddns-py-huawei
 =============================================='''
@@ -18,7 +18,7 @@ try:
     from typing import Any
     
     def logger(text):
-        if isinstance(text, dict):
+        if isinstance(text, dict) or isinstance(text, list):
             try:
                 text = json.dumps(text, indent=4)
             except: pass
@@ -135,7 +135,7 @@ try:
             "get_ip_from": str.strip(config['get_ip_from']),
             "name": str.lower(str.strip(config['name'])),
             "ttl": int(config['ttl']),
-            "region": config['region']
+            "region": str.lower(str.strip(config['region']))
         }
     except:
         logger('配置文件读取失败，请检查是否有缺失的项，或类型是否正确，可尝试将配置文件删除或重命名，然后运行程序重新生成再填写。')
@@ -181,6 +181,9 @@ try:
         b = True
     if config['ttl'] < 1:
         logger('【错误】TTL不得小于1秒！')
+        b = True
+    if config['region'] == '':
+        logger('【错误】请在配置文件里填写region')
         b = True
 
     if b:
@@ -261,7 +264,7 @@ f'''选择操作模式
             logger(f"获取IP失败！正则表达式找不到IP")
 
     def get_zone():
-        logger('获取 zone')
+        logger('获取zone')
         try:
             req = ListPublicZonesRequest()
             # 简单筛选根域名，例如 ddns.example.com => example.com
@@ -317,7 +320,7 @@ f'''选择操作模式
             logger('指定类型的指定域名 无 记录')
         except Exception as e:
             logger(e)
-            logger('获取recordSet失败，请检查是否断网。:(')
+            logger('获取解析失败，请检查是否断网。:(')
         return False
 
     def set_record():
