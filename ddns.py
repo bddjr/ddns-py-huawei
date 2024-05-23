@@ -326,10 +326,11 @@ f'''选择操作模式
                     logger('【警告】该域名有多条解析，请手动移除多余的解析，否则可能导致DNS服务不能正常工作！')
                 return recordsets[0]
             logger('指定类型的指定域名 无 记录')
+            return None
         except Exception as e:
             logger(e)
             logger('获取解析失败，请检查是否断网。:(')
-        return False
+            return False
 
     def set_record():
         if ip == None:
@@ -338,6 +339,8 @@ f'''选择操作模式
         if not zone:
             return False
         recordSet = get_record(zone)
+        if recordSet == False:
+            return False
         try:
             if recordSet:
                 records: list[str] = recordSet['records']
@@ -407,8 +410,10 @@ f'''选择操作模式
         if not zone:
             exit(1)
         recordSet = get_record(zone)
-        if not recordSet:
+        if recordSet == False:
             exit(1)
+        if recordSet == None:
+            exit()
 
         logger('删除解析记录')
         try:
