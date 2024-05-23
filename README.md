@@ -75,12 +75,13 @@ ddns-py-huawei 启动！
 ## 启动
 ### Windows
 预先安装python3  
-然后双击 `ddns.py.bat` 启动，或者在命令行输入 `py ddns.py`  
+然后双击 `ddns.bat` 启动，或者在命令行输入 `py ddns.py`  
 
 ### Ubuntu
 ```
 apt install python3 python3-pip
-python3 ddns.py
+
+./ddns
 ```
 
 ***
