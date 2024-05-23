@@ -140,6 +140,7 @@ try:
     except Exception as e:
         logger(e)
         logger('配置文件读取失败，请检查是否有缺失的项，或类型是否正确，可尝试将配置文件删除或重命名，然后运行程序重新生成再填写。')
+        exit()
     
     if config["access_key_id"]=="" or config["secret_access_key"]=="":
         logger('从 credentials.csv 读取访问密钥')
