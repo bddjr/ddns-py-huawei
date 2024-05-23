@@ -5,7 +5,7 @@ try:
     print(
 '''ddns-py-huawei 启动！
 一款用于华为云的 DDNS 工具。
-版本：1.0.2
+版本：1.0.3
 作者：bddjr
 仓库：https://github.com/bddjr/ddns-py-huawei
 =============================================='''
@@ -69,7 +69,7 @@ try:
     except:
         pip_install('huaweicloudsdkcore')
         from huaweicloudsdkcore.auth.credentials import BasicCredentials
-    from huaweicloudsdkcore.exceptions import exceptions
+    # from huaweicloudsdkcore.exceptions import exceptions
 
     try: from huaweicloudsdkdns.v2.region.dns_region import DnsRegion
     except:
@@ -137,7 +137,8 @@ try:
             "ttl": int(config['ttl']),
             "region": str.lower(str.strip(config['region']))
         }
-    except:
+    except Exception as e:
+        logger(e)
         logger('配置文件读取失败，请检查是否有缺失的项，或类型是否正确，可尝试将配置文件删除或重命名，然后运行程序重新生成再填写。')
     
     if config["access_key_id"]=="" or config["secret_access_key"]=="":
@@ -145,6 +146,7 @@ try:
         credentials_csv_filepath = os.path.join(dirname, 'credentials.csv')
         if not os.path.exists(credentials_csv_filepath):
             logger('找不到文件。:(')
+            exit()
         try:
             f = open(credentials_csv_filepath, 'r', encoding='utf-8')
         except Exception as e:
