@@ -43,7 +43,7 @@ try:
             status = os.system(cmd)
             if status != 0:
                 logger(f'请先安装 pip3 。:(')
-                exit()
+                exit(1)
             notChecked_pip3 = False
 
         logger('尝试使用清华源安装模块 '+name)
@@ -63,7 +63,7 @@ try:
             return
 
         logger(f'模块 {name} 安装失败，请检查是否联网。:(')
-        exit()
+        exit(1)
 
     try: import requests
     except: 
@@ -115,19 +115,19 @@ try:
             logger('配置文件模板已生成，请在配置文件里填写 name（域名） api_key（API密钥） zone_id（区域ID）')
         else:
             logger('您已取消')
-        exit()
+        exit(1)
 
     try:
         f = open(config_filepath, 'r', encoding='utf-8')
     except Exception as e:
         logger(e)
         logger('配置文件读取失败，请检查文件权限。:(')
-        exit()
+        exit(1)
     try:
         config = json.load(f)
     except:
         logger('配置文件读取失败，JSON格式错误。:(')
-        exit()
+        exit(1)
     f.close()
     del f
     del config_filepath
@@ -145,27 +145,27 @@ try:
     except Exception as e:
         logger(e)
         logger('配置文件读取失败，请检查是否有缺失的项，或类型是否正确，可尝试将配置文件删除或重命名，然后运行程序重新生成再填写。')
-        exit()
+        exit(1)
     
     if config["access_key_id"]=="" or config["secret_access_key"]=="":
         logger('从 credentials.csv 读取访问密钥')
         credentials_csv_filepath = os.path.join(dirname, 'credentials.csv')
         if not os.path.exists(credentials_csv_filepath):
             logger('找不到文件。:(')
-            exit()
+            exit(1)
         try:
             f = open(credentials_csv_filepath, 'r', encoding='utf-8')
         except Exception as e:
             logger(e)
             logger('读取失败，请检查文件权限。:(')
-            exit()
+            exit(1)
         try:
             if f.readline().strip() != 'User Name,Access Key Id,Secret Access Key':
                 raise
             [config["access_key_id"], config["secret_access_key"]] = f.readline().strip().split(',')[-2:]
         except:
             logger('读取失败，格式错误。:(')
-            exit()
+            exit(1)
         
 
     def pixel_str(instr):
@@ -195,25 +195,25 @@ try:
         b = True
 
     if b:
-        exit()
+        exit(1)
     del b
 
     config_getipform_lower = str.lower(config['get_ip_from'])
     if config['type'] == "A":
         if config_getipform_lower in ["https://6.ipw.cn","http://6.ipw.cn"]:
             logger('【错误】A记录是用于IPv4的，但您错误地将get_ip_from填写为获取IPv6的，请改成 https://4.ipw.cn')
-            exit()
+            exit(1)
         logger('【提醒】请预先确认您的网络支持公网IPv4再使用。')
         ipRegexp = re.compile(r'(\d{1,3}\.){3}\d{1,3}')
     elif config['type'] == "AAAA":
         if config_getipform_lower in ["https://4.ipw.cn","http://4.ipw.cn"]:
             logger('【错误】AAAA记录是用于IPv6的，但您错误地将get_ip_from填写为获取IPv4的，请改成 https://6.ipw.cn')
-            exit()
+            exit(1)
         logger('【提醒】请预先确认您的网络支持公网IPv6再使用。家庭宽带可能需要将光猫、路由器的防火墙关闭（会暴露所有IPv6端口！）')
         ipRegexp = re.compile(r'([0-9a-fA-F]{1,4})?(::?[0-9a-fA-F]{1,4}){1,7}')
     else:
         logger(f'【错误】该程序不支持{config['type']}类型记录！请修改type')
-        exit()
+        exit(1)
     del config_getipform_lower
 
     print('—————————————————————————')
@@ -238,7 +238,7 @@ f'''选择操作模式
         print('\n模式：' + modelist[mode-1])
     except:
         print('\n找不到模式，请检查输入是否有误。:(')
-        exit()
+        exit(1)
 
     del modelist
     print('—————————————————————————')
@@ -405,10 +405,10 @@ f'''选择操作模式
     elif mode == 3:
         zone = get_zone()
         if not zone:
-            exit()
+            exit(1)
         recordSet = get_record(zone)
         if not recordSet:
-            exit()
+            exit(1)
 
         logger('删除解析记录')
         try:
@@ -419,12 +419,12 @@ f'''选择操作模式
             resp: DeleteRecordSetResponse = client.delete_record_set(req) # type: ignore
             if not resp.status_code or resp.status_code > 299:
                 logger(f'删除失败，状态码 {resp.status_code}')
-                exit()
+                exit(1)
             logger('删除成功！:D')
         except Exception as e:
             logger(e)
             logger('解析删除失败，请检查是否断网。:(')
-            exit()
+            exit(1)
 
 
 except KeyboardInterrupt:
